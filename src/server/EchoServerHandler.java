@@ -18,6 +18,7 @@ package server;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import network.Packet;
 
 /**
  * Handler implementation for the echo server.
@@ -26,8 +27,20 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 public class EchoServerHandler extends ChannelInboundHandlerAdapter {
 
     @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+    }
+
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        ctx.channel().close();
+    }
+
+    @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
-        ctx.write(msg);
+        Packet packet = (Packet) msg;
+        System.out.println("[Recv] " + ctx.channel().remoteAddress() + " " + packet);
+
+        channelSend(ctx, packet);
     }
 
     @Override
@@ -40,5 +53,10 @@ public class EchoServerHandler extends ChannelInboundHandlerAdapter {
         // Close the connection when an exception is raised.
         cause.printStackTrace();
         ctx.close();
+    }
+
+    private void channelSend(ChannelHandlerContext ctx, Packet packet){
+        System.out.println("[Send] " + ctx.channel().remoteAddress() + " " + packet);
+        ctx.writeAndFlush(packet.toArray());
     }
 }

@@ -26,6 +26,7 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
+import network.Codec;
 
 /**
  * Echoes back any received data from a client.
@@ -50,6 +51,8 @@ public final class EchoServer {
                         public void initChannel(SocketChannel ch) throws Exception {
                             ChannelPipeline p = ch.pipeline();
                             //p.addLast(new LoggingHandler(LogLevel.INFO));
+                            p.addLast(new Codec.PacketDecoder());
+                            p.addLast(new Codec.PacketEncoder());
                             p.addLast(serverHandler);
                         }
                     });
