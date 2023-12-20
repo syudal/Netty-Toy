@@ -15,9 +15,13 @@
  */
 package server;
 
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.channel.group.ChannelGroup;
+import io.netty.channel.group.DefaultChannelGroup;
+import io.netty.util.concurrent.GlobalEventExecutor;
 import network.Packet;
 
 /**
@@ -25,13 +29,17 @@ import network.Packet;
  */
 @Sharable
 public class EchoServerHandler extends ChannelInboundHandlerAdapter {
-
+    static final ChannelGroup channels = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        System.out.println("[Connect] " + ctx.channel().remoteAddress());
+        channels.add(ctx.channel());
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        System.out.println("[DisConnect] " + ctx.channel().remoteAddress());
+        channels.remove(ctx.channel());
         ctx.channel().close();
     }
 
@@ -40,7 +48,8 @@ public class EchoServerHandler extends ChannelInboundHandlerAdapter {
         Packet packet = (Packet) msg;
         System.out.println("[Recv] " + ctx.channel().remoteAddress() + " " + packet);
 
-        channelSend(ctx, packet);
+        broadcastChannelSend(packet);
+        //channelSend(ctx.channel(), packet);
     }
 
     @Override
@@ -55,8 +64,14 @@ public class EchoServerHandler extends ChannelInboundHandlerAdapter {
         ctx.close();
     }
 
-    private void channelSend(ChannelHandlerContext ctx, Packet packet){
-        System.out.println("[Send] " + ctx.channel().remoteAddress() + " " + packet);
-        ctx.writeAndFlush(packet.toArray());
+    private void broadcastChannelSend(Packet packet){
+        for (Channel c: channels) {
+            channelSend(c, packet);
+        }
+    }
+
+    private void channelSend(Channel channel, Packet packet){
+        System.out.println("[Send] " + channel.remoteAddress() + " " + packet);
+        channel.writeAndFlush(packet.toArray());
     }
 }
