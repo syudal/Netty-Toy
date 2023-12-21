@@ -135,7 +135,7 @@ namespace Socketlib {
 
             switch (item) {
                 case bool b: {
-                        foreach (byte temp in BitConverter.GetBytes(b)) {
+                        foreach (byte temp in BitConverter.GetBytes(b).Reverse()) {
                             buffer[pointer++] = temp;
                         }
                         break;
@@ -146,35 +146,35 @@ namespace Socketlib {
                     break;
 
                 case short s: {
-                        foreach (byte temp in BitConverter.GetBytes(s)) {
+                        foreach (byte temp in BitConverter.GetBytes(s).Reverse()) {
                             buffer[pointer++] = temp;
                         }
                         break;
                     }
 
                 case int i: {
-                        foreach (byte temp in BitConverter.GetBytes(i)) {
+                        foreach (byte temp in BitConverter.GetBytes(i).Reverse()) {
                             buffer[pointer++] = temp;
                         }
                         break;
                     }
 
                 case long l: {
-                        foreach (byte temp in BitConverter.GetBytes(l)) {
+                        foreach (byte temp in BitConverter.GetBytes(l).Reverse()) {
                             buffer[pointer++] = temp;
                         }
                         break;
                     }
 
                 case float f: {
-                        foreach (byte temp in BitConverter.GetBytes(f)) {
+                        foreach (byte temp in BitConverter.GetBytes(f).Reverse()) {
                             buffer[pointer++] = temp;
                         }
                         break;
                     }
 
                 case double d: {
-                        foreach (byte temp in BitConverter.GetBytes(d)) {
+                        foreach (byte temp in BitConverter.GetBytes(d).Reverse()) {
                             buffer[pointer++] = temp;
                         }
                         break;
@@ -203,8 +203,10 @@ namespace Socketlib {
             StringBuilder builder = new();
 
             foreach (byte data in ToArray()) {
-                builder.Append(string.Format("%02X ", data));
+                builder.Append(string.Format("{0:X2} ", data));
             }
+
+            builder.AppendLine();
 
             return builder.ToString();
         }

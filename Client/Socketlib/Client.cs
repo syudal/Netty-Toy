@@ -1,8 +1,7 @@
 ﻿using System.Net.Sockets;
-using System.Text;
 
 namespace Socketlib {
-    public delegate void Recv(byte[] packet);
+    public delegate void Recv(Packet packet);
     public class Client {
 
         private TcpClient client;
@@ -22,7 +21,9 @@ namespace Socketlib {
         }
 
         public void Send(Packet packet) {
-            stream.Write(packet.ToArray(), 0, packet.Length());
+            Packet sendPacket = Codec.Encoder(packet);
+
+            stream.Write(sendPacket.ToArray(), 0, sendPacket.Length());
             stream.Flush();
         }
 
@@ -35,10 +36,10 @@ namespace Socketlib {
             while (true) {
                 byte[] buffer = new byte[client.ReceiveBufferSize];
                 int length = stream.Read(buffer, 0, buffer.Length);
-                byte[] result = new byte[length];
-                Array.Copy(buffer, result, length);
 
-                recv?.Invoke(result);
+                Packet recvPacket = Codec.Decoder(buffer, length);
+
+                recv?.Invoke(recvPacket);
             }
         }
 
