@@ -19,7 +19,7 @@ public final class Codec {
             byte[] src = new byte[length];
             in.readBytes(src);
 
-            Packet packet = new Packet();
+            Packet packet = new Packet(length);
             packet.setDataLen(length);
             packet.rawAppendBuffer(Unpooled.wrappedBuffer(src), length);
             out.add(packet);

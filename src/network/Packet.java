@@ -2,7 +2,6 @@ package network;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import util.Pointer;
 
 public class Packet{
     private static final int BLOCK_SIZE = 0x10000;
@@ -20,32 +19,28 @@ public class Packet{
         this.buf = Unpooled.buffer(size);
     }
 
-    public int appendBuffer(ByteBuf buff, Pointer<Integer> lastState) {
-        final int HEADER = Short.BYTES + Short.BYTES;//uRawSeq + uDataLen
+    public void copyTo(Packet packet) {
+        byte[] buff = buf.array();
+        byte[] sendBuff = new byte [buff.length];
+        int offset = buf.readerIndex();
+        int size = buff.length - offset;
+        System.arraycopy(buff, offset, sendBuff, 0, size);
+        packet.encodeBuffer(sendBuff);
+    }
 
-        if (lastState != null)
-            lastState.set(state);
-        int size = buff.readableBytes();
-        if (state == 0) {
-            int len = Math.min(size, HEADER - length);
-            rawAppendBuffer(buff, len);
-            if (size >= HEADER) {
-                state = 1;
-                rawSeq = decodeShort();
-                dataLen = decodeShort();
-                size -= len;
-                if (size == 0)  {
-                    return state;
-                }
-            }
+    public boolean decodeBool() {
+        return buf.readBoolean();
+    }
+
+    public byte decodeByte() {
+        return buf.readByte();
+    }
+
+    public int decodeByte(boolean unsigned) {
+        if (!unsigned) {
+            return decodeByte();
         }
-        int append = Math.min(size, dataLen + HEADER - length);
-        rawAppendBuffer(buff, append);
-        if (length >= dataLen + HEADER) {
-            state = 2;
-        }
-        size -= append;
-        return state;
+        return buf.readUnsignedByte();
     }
 
     public short decodeShort() {
@@ -59,6 +54,100 @@ public class Packet{
         return buf.readUnsignedShortLE();
     }
 
+    public int decodeInt() {
+        return buf.readIntLE();
+    }
+
+    public long decodeLong() {
+        return buf.readLongLE();
+    }
+
+    public double decodeDouble() {
+        return buf.readDoubleLE();
+    }
+
+    public String decodeString(int size) {
+        byte[] arr = new byte[size];
+        int i = 0;
+        while (i < size) {
+            arr[i++] = (byte) (decodeByte(true) & 0xFF);
+        }
+        return new String(arr).replaceAll("\0", "");
+    }
+
+    public String decodeString() {
+        return decodeString(decodeShort());
+    }
+
+    public void decodePadding(int length) {
+        buf.skipBytes(length);
+    }
+
+    public void encodeBool(boolean b) {
+        buf.writeBoolean(b);
+    }
+
+    public void encodeByte(byte b) {
+        buf.writeByte(b);
+    }
+
+    public void encodeByte(int b) {
+        buf.writeByte(b);
+    }
+
+    public void encodeShort(short n) {
+        buf.writeShortLE(n);
+    }
+
+    public void encodeShort(int n) {
+        buf.writeShortLE(n);
+    }
+
+    public void encodeInt(int n) {
+        buf.writeIntLE(n);
+    }
+
+    public void encodeLong(long l) {
+        buf.writeLongLE(l);
+    }
+
+    public void encodeFloat(float f) {
+        buf.writeFloatLE(f);
+    }
+
+    public void encodeDouble(double d) {
+        buf.writeDoubleLE(d);
+    }
+
+    public void encodeString(String str) {
+        byte[] src = str.getBytes();
+
+        encodeShort(src.length);
+        encodeBuffer(src);
+    }
+
+    public void encodeString(String str, int size) {
+        byte[] src = str.getBytes();
+
+        for (int i = 0; i < size; i++) {
+            if (i >= src.length) {
+                encodeByte('\0');
+            } else {
+                encodeByte(src[i]);
+            }
+        }
+    }
+
+    public void encodeBuffer(byte[] buffer) {
+        buf.writeBytes(buffer);
+    }
+
+    public void encodePadding(int count) {
+        for (int i = 0; i < count; i++) {
+            encodeByte(0);
+        }
+    }
+
     public void rawAppendBuffer(ByteBuf buff, int size) {
         if (size + length > buf.readableBytes()) {
             buf.writeBytes(buff);
@@ -68,6 +157,14 @@ public class Packet{
 
     public void setDataLen(int len) {
         this.dataLen = len;
+    }
+
+    public int getDataLen() {
+        return dataLen;
+    }
+
+    public int getRawSeq() {
+        return rawSeq;
     }
 
     public byte[] toArray() {

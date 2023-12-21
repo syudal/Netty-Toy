@@ -46,10 +46,21 @@ public class EchoServerHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         Packet packet = (Packet) msg;
+        Packet sendPacket = new Packet(packet.getDataLen());
+
+        packet.copyTo(sendPacket);
         System.out.println("[Recv] " + ctx.channel().remoteAddress() + " " + packet);
 
-        broadcastChannelSend(packet);
-        //channelSend(ctx.channel(), packet);
+        short header = packet.decodeShort();
+
+        switch (header){
+            case 0:
+                broadcastChannelSend(sendPacket);
+                break;
+
+            default:
+                channelSend(ctx.channel(), sendPacket);
+        }
     }
 
     @Override
