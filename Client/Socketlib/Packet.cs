@@ -3,21 +3,18 @@
 namespace Socketlib {
     public class Packet {
         private static int BLOCK_SIZE = 0x10000;
-        private byte[] buffer;
-        private int pointer = 0;
+        private List<byte> buffer;
 
         public Packet() {
-            this.buffer = new byte[BLOCK_SIZE];
+            buffer = new List<byte>(BLOCK_SIZE);
         }
 
         public Packet(int size) {
-            this.buffer = new byte[size];
+            buffer = new List<byte>(size);
         }
 
         public void CopyTo(Packet packet) {
-            byte[] sendBuff = new byte[buffer.Length];
-            Array.Copy(buffer, sendBuff, buffer.Length);
-            packet.EncodeBuffer(sendBuff);
+            packet.EncodeBuffer(buffer.ToArray());
         }
 
         public bool DecodeBool() {
@@ -65,11 +62,11 @@ namespace Socketlib {
             ReadBuffer(length);
         }
 
-        public void EncodeBool(bool b) { 
+        public void EncodeBool(bool b) {
             WriteBuffer(b);
         }
 
-        public void EncodeByte(byte b) { 
+        public void EncodeByte(byte b) {
             WriteBuffer(b);
         }
 
@@ -77,15 +74,15 @@ namespace Socketlib {
             WriteBuffer(s);
         }
 
-        public void EncodeInt(int i) { 
+        public void EncodeInt(int i) {
             WriteBuffer(i);
         }
 
-        public void EncodeLong(long l) {  
+        public void EncodeLong(long l) {
             WriteBuffer(l);
         }
 
-        public void EncodeFloat(float f) { 
+        public void EncodeFloat(float f) {
             WriteBuffer(f);
         }
 
@@ -97,7 +94,7 @@ namespace Socketlib {
             byte[] src = Encoding.UTF8.GetBytes(s);
 
             EncodeShort((short)src.Length);
-            WriteBuffer(src); 
+            WriteBuffer(src);
         }
 
         public void EncodeString(string s, int size) {
@@ -125,8 +122,8 @@ namespace Socketlib {
         private byte[] ReadBuffer(int length) {
             byte[] temp = new byte[length];
 
-            Array.Copy(buffer, pointer, temp, 0, length);
-            pointer += length;
+            buffer.CopyTo(0, temp, 0, length);
+            buffer.RemoveRange(0, length);
 
             return temp;
         }
@@ -134,69 +131,48 @@ namespace Socketlib {
         private void WriteBuffer(object item) {
 
             switch (item) {
-                case bool b: {
-                        foreach (byte temp in BitConverter.GetBytes(b).Reverse()) {
-                            buffer[pointer++] = temp;
-                        }
-                        break;
-                    }
-
-                case byte b:
-                    buffer[pointer++] = b;
+                case bool b:
+                    buffer.AddRange(BitConverter.GetBytes(b).Reverse());
                     break;
 
-                case short s: {
-                        foreach (byte temp in BitConverter.GetBytes(s).Reverse()) {
-                            buffer[pointer++] = temp;
-                        }
-                        break;
-                    }
+                case byte b:
+                    buffer.Add(b);
+                    break;
 
-                case int i: {
-                        foreach (byte temp in BitConverter.GetBytes(i).Reverse()) {
-                            buffer[pointer++] = temp;
-                        }
-                        break;
-                    }
+                case short s:
+                    buffer.AddRange(BitConverter.GetBytes(s).Reverse());
+                    break;
 
-                case long l: {
-                        foreach (byte temp in BitConverter.GetBytes(l).Reverse()) {
-                            buffer[pointer++] = temp;
-                        }
-                        break;
-                    }
+                case int i:
+                    buffer.AddRange(BitConverter.GetBytes(i).Reverse());
+                    break;
 
-                case float f: {
-                        foreach (byte temp in BitConverter.GetBytes(f).Reverse()) {
-                            buffer[pointer++] = temp;
-                        }
-                        break;
-                    }
+                case long l:
+                    buffer.AddRange(BitConverter.GetBytes(l).Reverse());
+                    break;
 
-                case double d: {
-                        foreach (byte temp in BitConverter.GetBytes(d).Reverse()) {
-                            buffer[pointer++] = temp;
-                        }
-                        break;
-                    }
+                case float f:
+                    buffer.AddRange(BitConverter.GetBytes(f).Reverse());
+                    break;
 
-                case byte[] b: {
-                        foreach (byte temp in b) {
-                            buffer[pointer++] = temp;
-                        }
-                        break;
-                    }
+                case double d:
+                    buffer.AddRange(BitConverter.GetBytes(d).Reverse());
+                    break;
+
+                case byte[] b:
+                    buffer.AddRange(b);
+                    break;
             }
 
         }
 
-        public int Length() { 
-            return buffer.Length;
+        public int Length() {
+            return buffer.Count;
         }
 
 
         public byte[] ToArray() {
-            return buffer;
+            return buffer.ToArray();
         }
 
         public override string ToString() {
