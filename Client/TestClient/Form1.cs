@@ -10,7 +10,7 @@ namespace TestClient {
         }
 
         private void button1_Click(object sender, EventArgs e) {
-            client.Connect(textBox1.Text, Convert.ToInt32(textBox2.Text), UpdatePacket);
+            client.Connect(textBox1.Text, Convert.ToInt32(textBox2.Text), UpdatePacket, ExceptionCaught);
         }
 
         private void UpdatePacket(Packet packet) {
@@ -19,6 +19,10 @@ namespace TestClient {
             } else {
                 textBox4.Text += packet.ToString();
             }
+        }
+
+        private void ExceptionCaught(Exception ex) { 
+            Console.WriteLine(ex.Message);
         }
 
         private void button2_Click(object sender, EventArgs e) {
