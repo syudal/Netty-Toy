@@ -30,7 +30,6 @@ public final class Codec {
 
         @Override
         protected void encode(ChannelHandlerContext ctx, byte[] message, ByteBuf out) throws Exception {
-
             out.writeInt(message.length);
             out.writeBytes(Arrays.copyOf(message, message.length));
         }

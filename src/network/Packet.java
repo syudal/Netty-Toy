@@ -3,6 +3,8 @@ package network;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
+import java.nio.charset.StandardCharsets;
+
 public class Packet{
     private static final int BLOCK_SIZE = 0x10000;
     private final ByteBuf buf;
@@ -72,7 +74,7 @@ public class Packet{
         while (i < size) {
             arr[i++] = (byte) (decodeByte(true) & 0xFF);
         }
-        return new String(arr).replaceAll("\0", "");
+        return new String(arr, StandardCharsets.UTF_8).replaceAll("\0", "");
     }
 
     public String decodeString() {
@@ -120,14 +122,14 @@ public class Packet{
     }
 
     public void encodeString(String str) {
-        byte[] src = str.getBytes();
+        byte[] src = str.getBytes(StandardCharsets.UTF_8);
 
         encodeShort(src.length);
         encodeBuffer(src);
     }
 
     public void encodeString(String str, int size) {
-        byte[] src = str.getBytes();
+        byte[] src = str.getBytes(StandardCharsets.UTF_8);
 
         for (int i = 0; i < size; i++) {
             if (i >= src.length) {

@@ -18,31 +18,31 @@ namespace Socketlib {
         }
 
         public bool DecodeBool() {
-            return Convert.ToBoolean(ReadBuffer(1));
+            return BitConverter.ToBoolean(ReadBuffer(1));
         }
 
         public byte DecodeByte() {
-            return Convert.ToByte(ReadBuffer(1));
+            return ReadBuffer(1)[0];
         }
 
         public short DecodeShort() {
-            return Convert.ToSByte(ReadBuffer(2));
+            return BitConverter.ToInt16(ReadBuffer(2));
         }
 
         public int DecodeInt() {
-            return Convert.ToInt32(ReadBuffer(4));
+            return BitConverter.ToInt32(ReadBuffer(4));
         }
 
         public long DecodeLong() {
-            return Convert.ToInt64(ReadBuffer(8));
+            return BitConverter.ToInt64(ReadBuffer(8));
         }
 
         public float DecodeFloat() {
-            return Convert.ToSingle(ReadBuffer(4));
+            return BitConverter.ToSingle(ReadBuffer(4));
         }
 
         public double DecodeDouble() {
-            return Convert.ToDouble(ReadBuffer(8));
+            return BitConverter.ToDouble(ReadBuffer(8));
         }
 
         public string DecodeString(int size) {
