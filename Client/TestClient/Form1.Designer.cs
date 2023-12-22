@@ -32,6 +32,7 @@
             label3 = new Label();
             button2 = new Button();
             textBox4 = new TextBox();
+            checkBox1 = new CheckBox();
             SuspendLayout();
             // 
             // label1
@@ -113,11 +114,22 @@
             textBox4.Size = new Size(780, 369);
             textBox4.TabIndex = 8;
             // 
+            // checkBox1
+            // 
+            checkBox1.AutoSize = true;
+            checkBox1.Location = new Point(552, 12);
+            checkBox1.Name = "checkBox1";
+            checkBox1.Size = new Size(124, 19);
+            checkBox1.TabIndex = 9;
+            checkBox1.Text = "BoardcastMessage";
+            checkBox1.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(checkBox1);
             Controls.Add(textBox4);
             Controls.Add(button2);
             Controls.Add(label3);
@@ -145,5 +157,6 @@
         private Label label3;
         private Button button2;
         private TextBox textBox4;
+        private CheckBox checkBox1;
     }
 }

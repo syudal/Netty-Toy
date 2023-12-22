@@ -23,7 +23,8 @@ namespace TestClient {
 
         private void button2_Click(object sender, EventArgs e) {
             byte[] bytes = Encoding.UTF8.GetBytes(textBox3.Text);
-            Packet packet = new(bytes.Length);
+            Packet packet = new();
+            packet.EncodeShort(Convert.ToInt16(!checkBox1.Checked));
             packet.EncodeBuffer(bytes);
 
             client.Send(packet);
