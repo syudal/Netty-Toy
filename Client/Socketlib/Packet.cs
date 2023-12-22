@@ -182,8 +182,6 @@ namespace Socketlib {
                 builder.Append(string.Format("{0:X2} ", data));
             }
 
-            builder.AppendLine();
-
             return builder.ToString();
         }
     }

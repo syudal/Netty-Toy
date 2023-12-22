@@ -9,13 +9,21 @@ namespace Socketlib {
         private TcpClient client;
         private NetworkStream stream;
 
-        private static Recv recv;
-        private static ExceptionCaught exceptionCaught;
+        private static Recv? recv;
+        private static ExceptionCaught? exceptionCaught;
 
-        public void Connect(string ip, int port, Recv recvFunction, ExceptionCaught exceptionCaughtFunction) {
+        public Client(Recv recvFunction, ExceptionCaught exceptionCaughtFunction) {
             recv = recvFunction;
             exceptionCaught = exceptionCaughtFunction;
+        }
 
+        ~Client() {
+            recv = null;
+            exceptionCaught = null;
+        }
+
+
+        public void Connect(string ip, int port) {
             try {
                 client = new TcpClient(ip, port);
                 stream = client.GetStream();
@@ -30,20 +38,26 @@ namespace Socketlib {
         }
 
         public void Send(Packet packet) {
+            if (stream == null) {
+                exceptionCaught?.Invoke(new NullReferenceException());
+                return;
+            }
+
             try {
                 Packet sendPacket = Codec.Encoder(packet);
 
                 stream.Write(sendPacket.ToArray(), 0, sendPacket.Length());
                 stream.Flush();
             } catch (Exception ex) {
+                Close();
                 exceptionCaught?.Invoke(ex);
             }
         }
 
         public void Close() {
             try {
-                stream.Close();
-                client.Close();
+                stream?.Close();
+                client?.Close();
             } catch (Exception ex) {
                 exceptionCaught?.Invoke(ex);
             }
@@ -60,6 +74,7 @@ namespace Socketlib {
                     recv?.Invoke(recvPacket);
                 }
             } catch (Exception ex) {
+                Close();
                 exceptionCaught?.Invoke(ex);
             }
         }
