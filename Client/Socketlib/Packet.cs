@@ -132,7 +132,7 @@ namespace Socketlib {
 
             switch (item) {
                 case bool b:
-                    buffer.AddRange(BitConverter.GetBytes(b).Reverse());
+                    buffer.Add(BitConverter.GetBytes(b)[0]);
                     break;
 
                 case byte b:

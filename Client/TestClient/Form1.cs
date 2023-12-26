@@ -31,7 +31,7 @@ namespace TestClient {
             if (textBox4.InvokeRequired) {
                 textBox4.Invoke((MethodInvoker) delegate { textBox4.Text = stringBuilder.ToString(); });
             } else {
-                stringBuilder.ToString();
+                textBox4.Text = stringBuilder.ToString();
             }
         }
 
