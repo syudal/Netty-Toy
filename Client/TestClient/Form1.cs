@@ -4,9 +4,12 @@ using System.Text;
 namespace TestClient {
     public partial class Form1 : Form {
         Client client;
+        StringBuilder stringBuilder;
+
         public Form1() {
             InitializeComponent();
             client = new Client(UpdatePacket, ExceptionCaught);
+            stringBuilder = new();
         }
 
         private void button1_Click(object sender, EventArgs e) {
@@ -14,28 +17,28 @@ namespace TestClient {
         }
 
         private void UpdatePacket(Packet packet) {
-            WriteLog(packet.ToString());
+            packet.DecodeShort();
+            stringBuilder.AppendLine(packet.ToString());
+            WriteLog();
         }
 
         private void ExceptionCaught(Exception ex) {
-            WriteLog(ex.Message);
+            stringBuilder.AppendLine(ex.Message);
+            WriteLog();
         }
 
-        private void WriteLog(string log) {
-            log += Environment.NewLine;
-
+        private void WriteLog() {
             if (textBox4.InvokeRequired) {
-                textBox4.Invoke((MethodInvoker) delegate { textBox4.Text += log; });
+                textBox4.Invoke((MethodInvoker) delegate { textBox4.Text = stringBuilder.ToString(); });
             } else {
-                textBox4.Text += log;
+                stringBuilder.ToString();
             }
         }
 
         private void button2_Click(object sender, EventArgs e) {
-            byte[] bytes = Encoding.UTF8.GetBytes(textBox3.Text);
             Packet packet = new();
             packet.EncodeShort(Convert.ToInt16(!checkBox1.Checked));
-            packet.EncodeBuffer(bytes);
+            packet.EncodeString(textBox3.Text);
 
             client.Send(packet);
         }

@@ -60,6 +60,10 @@ public class Packet{
         return buf.readIntLE();
     }
 
+    public float decodeFloat() {
+        return buf.readFloatLE();
+    }
+
     public long decodeLong() {
         return buf.readLongLE();
     }

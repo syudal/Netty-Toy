@@ -2,7 +2,7 @@
     internal class Codec {
         internal static Packet Encoder(Packet packet) {
             Packet temp = new(packet.Length() + 4);
-            temp.EncodeInt(packet.Length());
+            temp.EncodeBuffer(BitConverter.GetBytes(packet.Length()).Reverse().ToArray());
             temp.EncodeBuffer(packet.ToArray());
 
             return temp;

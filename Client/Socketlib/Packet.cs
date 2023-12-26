@@ -140,23 +140,23 @@ namespace Socketlib {
                     break;
 
                 case short s:
-                    buffer.AddRange(BitConverter.GetBytes(s).Reverse());
+                    buffer.AddRange(BitConverter.GetBytes(s));
                     break;
 
                 case int i:
-                    buffer.AddRange(BitConverter.GetBytes(i).Reverse());
+                    buffer.AddRange(BitConverter.GetBytes(i));
                     break;
 
                 case long l:
-                    buffer.AddRange(BitConverter.GetBytes(l).Reverse());
+                    buffer.AddRange(BitConverter.GetBytes(l));
                     break;
 
                 case float f:
-                    buffer.AddRange(BitConverter.GetBytes(f).Reverse());
+                    buffer.AddRange(BitConverter.GetBytes(f));
                     break;
 
                 case double d:
-                    buffer.AddRange(BitConverter.GetBytes(d).Reverse());
+                    buffer.AddRange(BitConverter.GetBytes(d));
                     break;
 
                 case byte[] b:
