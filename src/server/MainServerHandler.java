@@ -19,27 +19,25 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.channel.group.ChannelGroup;
-import io.netty.channel.group.DefaultChannelGroup;
-import io.netty.util.concurrent.GlobalEventExecutor;
+
 import network.Packet;
 
 /**
  * Handler implementation for the echo server.
  */
 @Sharable
-public class EchoServerHandler extends ChannelInboundHandlerAdapter {
-    static final ChannelGroup channels = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
+public class MainServerHandler extends ChannelInboundHandlerAdapter {
+    static final server.Channel channel = server.Channel.getInstance();
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         System.out.println("[Connect] " + ctx.channel().remoteAddress());
-        channels.add(ctx.channel());
+        channel.getBroadCastChannel().add(ctx.channel());
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         System.out.println("[DisConnect] " + ctx.channel().remoteAddress());
-        channels.remove(ctx.channel());
+        channel.getBroadCastChannel().remove(ctx.channel());
         ctx.channel().close();
     }
 
@@ -72,12 +70,12 @@ public class EchoServerHandler extends ChannelInboundHandlerAdapter {
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         // Close the connection when an exception is raised.
         cause.printStackTrace();
-        channels.remove(ctx.channel());
+        channel.getBroadCastChannel().remove(ctx.channel());
         ctx.close();
     }
 
     private void broadcastChannelSend(Packet packet){
-        for (Channel c: channels) {
+        for (Channel c: channel.getBroadCastChannel()) {
             channelSend(c, packet);
         }
     }

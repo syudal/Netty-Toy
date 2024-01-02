@@ -31,7 +31,7 @@ import network.Codec;
 /**
  * Echoes back any received data from a client.
  */
-public final class EchoServer {
+public final class MainServer {
 
     static final int PORT = Integer.parseInt(System.getProperty("port", "8007"));
 
@@ -39,7 +39,7 @@ public final class EchoServer {
         // Configure the server.
         EventLoopGroup bossGroup = new NioEventLoopGroup(1);
         EventLoopGroup workerGroup = new NioEventLoopGroup();
-        final EchoServerHandler serverHandler = new EchoServerHandler();
+        final MainServerHandler serverHandler = new MainServerHandler();
         try {
             ServerBootstrap b = new ServerBootstrap();
             b.group(bossGroup, workerGroup)
