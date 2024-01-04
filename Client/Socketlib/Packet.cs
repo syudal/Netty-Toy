@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace Socketlib {
     public class Packet {
@@ -176,7 +178,7 @@ namespace Socketlib {
         }
 
         public override string ToString() {
-            StringBuilder builder = new();
+            StringBuilder builder = new StringBuilder();
 
             foreach (byte data in ToArray()) {
                 builder.Append(string.Format("{0:X2} ", data));

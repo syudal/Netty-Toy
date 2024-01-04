@@ -1,4 +1,6 @@
-﻿using System.Net.Sockets;
+﻿using System;
+using System.Net.Sockets;
+using System.Threading;
 
 namespace Socketlib {
     public delegate void Recv(Packet packet);
@@ -28,7 +30,7 @@ namespace Socketlib {
                 client = new TcpClient(ip, port);
                 stream = client.GetStream();
 
-                Thread recvThread = new(Recv) {
+                Thread recvThread = new Thread(Recv) {
                     IsBackground = true
                 };
                 recvThread.Start();
