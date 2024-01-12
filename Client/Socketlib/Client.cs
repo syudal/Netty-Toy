@@ -81,5 +81,9 @@ namespace Socketlib {
             }
         }
 
+        public bool Connected() {
+            return client.Connected;
+        }
+
     }
 }
