@@ -47,7 +47,7 @@ namespace Socketlib {
             return BitConverter.ToDouble(ReadBuffer(8));
         }
 
-        public string DecodeString(int size) {
+        private string DecodeString(int size) {
             byte[] arr = new byte[size];
             int i = 0;
             while (i < size) {
@@ -101,6 +101,8 @@ namespace Socketlib {
 
         public void EncodeString(string s, int size) {
             byte[] src = Encoding.UTF8.GetBytes(s);
+
+            EncodeShort((short)size);
 
             for (int i = 0; i < size; i++) {
                 if (i >= src.Length) {
