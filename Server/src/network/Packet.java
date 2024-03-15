@@ -72,7 +72,7 @@ public class Packet{
         return buf.readDoubleLE();
     }
 
-    public String decodeString(int size) {
+    private String decodeString(int size) {
         byte[] arr = new byte[size];
         int i = 0;
         while (i < size) {
@@ -134,6 +134,8 @@ public class Packet{
 
     public void encodeString(String str, int size) {
         byte[] src = str.getBytes(StandardCharsets.UTF_8);
+
+        encodeShort(size);
 
         for (int i = 0; i < size; i++) {
             if (i >= src.length) {

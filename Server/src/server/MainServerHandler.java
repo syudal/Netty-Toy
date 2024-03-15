@@ -56,6 +56,75 @@ public class MainServerHandler extends ChannelInboundHandlerAdapter {
                 broadcastChannelSend(sendPacket);
                 break;
 
+            case 1: {
+                Packet ret = new Packet();
+                boolean login = false;
+
+                String id = packet.decodeString();
+                String pw = packet.decodeString();
+
+                if (id.equals("admin") && pw.equals("admin")) {
+                    login = true;
+                }
+
+                ret.encodeShort(header);
+                ret.encodeBool(login);
+
+                channelSend(ctx.channel(), ret);
+            }
+            break;
+
+            case 2: {
+                Packet ret = new Packet();
+                ret.encodeShort(header);
+                ret.encodeInt(5); // 캐릭터 갯수
+
+                channelSend(ctx.channel(), ret);
+            }
+            break;
+
+            case 4:{
+                Packet ret = new Packet();
+                ret.encodeShort(header);
+
+                String username = packet.decodeString();
+                if(username.equals("admin")){
+                    ret.encodeBool(false);
+                } else {
+                    ret.encodeBool(true);
+                }
+                channelSend(ctx.channel(), ret);
+            }
+            break;
+
+            case 10:{
+                boolean isPortal = packet.decodeBool();
+
+                int mapCode = 100000000;
+                String tn = "sp";
+                if(isPortal){
+                    mapCode = packet.decodeInt();
+                    tn = packet.decodeString();
+                }
+
+                Packet ret = new Packet();
+                ret.encodeShort(header);
+
+                ret.encodeInt(mapCode);
+                ret.encodeString(tn);
+
+                ret.encodeInt(12000);
+                ret.encodeInt(2000);
+                ret.encodeInt(20000);
+                ret.encodeInt(30000);
+                ret.encodeInt(0);
+                ret.encodeInt(0);
+                ret.encodeInt(0);
+                ret.encodeInt(0);
+                channelSend(ctx.channel(), ret);
+            }
+            break;
+
             default:
                 channelSend(ctx.channel(), sendPacket);
         }
