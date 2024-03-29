@@ -44,13 +44,15 @@ public final class MainServer {
             ServerBootstrap b = new ServerBootstrap();
             b.group(bossGroup, workerGroup)
                     .channel(NioServerSocketChannel.class)
-                    .option(ChannelOption.SO_BACKLOG, 100)
                     .handler(new LoggingHandler(LogLevel.INFO))
+                    .option(ChannelOption.SO_BACKLOG, 100)
+                    // 동접 인원
+                    .childOption(ChannelOption.TCP_NODELAY, true)
+                    // Nagle Algorithm 비활성화 여부
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         public void initChannel(SocketChannel ch) throws Exception {
                             ChannelPipeline p = ch.pipeline();
-                            //p.addLast(new LoggingHandler(LogLevel.INFO));
                             p.addLast(new Codec.PacketDecoder());
                             p.addLast(new Codec.PacketEncoder());
                             p.addLast(serverHandler);

@@ -25,9 +25,11 @@ namespace Socketlib {
         }
 
 
-        public void Connect(string ip, int port) {
+        public void Connect(string ip, int port, bool noDelay = false) {
             try {
-                client = new TcpClient(ip, port);
+                client = new TcpClient(ip, port) {
+                    NoDelay = noDelay
+                };
                 stream = client.GetStream();
 
                 Thread recvThread = new Thread(Recv) {
@@ -82,6 +84,9 @@ namespace Socketlib {
         }
 
         public bool Connected() {
+            if (client == null) {
+                return false;
+            }
             return client.Connected;
         }
 

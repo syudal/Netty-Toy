@@ -13,7 +13,7 @@ namespace TestClient {
         }
 
         private void button1_Click(object sender, EventArgs e) {
-            client.Connect(textBox1.Text, Convert.ToInt32(textBox2.Text));
+            client.Connect(textBox1.Text, Convert.ToInt32(textBox2.Text), true);
         }
 
         private void UpdatePacket(Packet packet) {
