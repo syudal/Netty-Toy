@@ -150,6 +150,10 @@ public class Packet{
         buf.writeBytes(buffer);
     }
 
+    public void encodeBuffer(Packet packet) {
+        encodeBuffer(packet.toArray());
+    }
+
     public void encodePadding(int count) {
         for (int i = 0; i < count; i++) {
             encodeByte(0);

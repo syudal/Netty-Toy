@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Socketlib {
@@ -16,7 +17,7 @@ namespace Socketlib {
         }
 
         public void CopyTo(Packet packet) {
-            packet.EncodeBuffer(buffer.ToArray());
+            packet.EncodeBuffer(ToArray());
         }
 
         public bool DecodeBool() {
@@ -115,6 +116,14 @@ namespace Socketlib {
 
         public void EncodeBuffer(byte[] src) {
             WriteBuffer(src);
+        }
+
+        public void EncodeBuffer(IEnumerable<byte> src) {
+            EncodeBuffer(src.ToArray());
+        }
+
+        public void EncodeBuffer(Packet src) {
+            EncodeBuffer(src.ToArray());
         }
 
         public void EncodePadding(int count) {

@@ -5,8 +5,8 @@ namespace Socketlib {
     internal class Codec {
         internal static Packet Encoder(Packet packet) {
             Packet temp = new Packet(packet.Length() + 4);
-            temp.EncodeBuffer(BitConverter.GetBytes(packet.Length()).Reverse().ToArray());
-            temp.EncodeBuffer(packet.ToArray());
+            temp.EncodeBuffer(BitConverter.GetBytes(packet.Length()).Reverse());
+            temp.EncodeBuffer(packet);
 
             return temp;
         }
