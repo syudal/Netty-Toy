@@ -5,7 +5,7 @@ import io.netty.buffer.Unpooled;
 
 import java.nio.charset.StandardCharsets;
 
-public class Packet{
+public class Packet {
     private static final int BLOCK_SIZE = 0x10000;
     private final ByteBuf buf;
     private int state;
@@ -23,7 +23,7 @@ public class Packet{
 
     public void copyTo(Packet packet) {
         byte[] buff = buf.array();
-        byte[] sendBuff = new byte [buff.length];
+        byte[] sendBuff = new byte[buff.length];
         int offset = buf.readerIndex();
         int size = buff.length - offset;
         System.arraycopy(buff, offset, sendBuff, 0, size);
@@ -167,16 +167,20 @@ public class Packet{
         length += size;
     }
 
-    public void setDataLen(int len) {
-        this.dataLen = len;
-    }
-
     public int getDataLen() {
         return dataLen;
     }
 
+    public void setDataLen(int len) {
+        this.dataLen = len;
+    }
+
     public int getRawSeq() {
         return rawSeq;
+    }
+
+    public int length() {
+        return buf.writerIndex() - buf.readerIndex();
     }
 
     public byte[] toArray() {
