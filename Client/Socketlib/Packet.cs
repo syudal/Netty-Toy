@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Socketlib {
     public class Packet {
-        private static int BLOCK_SIZE = 0x10000;
+        private const int BLOCK_SIZE = 0x10000;
         private List<byte> buffer;
 
         public Packet() {
@@ -17,7 +17,7 @@ namespace Socketlib {
         }
 
         public void CopyTo(Packet packet) {
-            packet.EncodeBuffer(ToArray());
+            packet.EncodeBuffer(buffer);
         }
 
         public bool DecodeBool() {
@@ -191,7 +191,7 @@ namespace Socketlib {
         public override string ToString() {
             StringBuilder builder = new StringBuilder();
 
-            foreach (byte data in ToArray()) {
+            foreach (byte data in buffer) {
                 builder.Append(string.Format("{0:X2} ", data));
             }
 
