@@ -21,12 +21,12 @@ class MainServerHandler : ChannelInboundHandlerAdapter() {
         ctx.channel().close()
     }
 
-    override fun channelRead(ctx: ChannelHandlerContext?, msg: Any?) {
+    override fun channelRead(ctx: ChannelHandlerContext, msg: Any?) {
         val packet: Packet = msg as Packet
         val sendPacket = Packet(packet.dataLen)
 
         packet.copyTo(sendPacket)
-        println("[Recv] " + ctx?.channel()?.remoteAddress() + " " + packet)
+        println("[Recv] " + ctx.channel().remoteAddress() + " " + packet)
 
         val header: Int = packet.decodeShort().toInt();
 
@@ -39,17 +39,17 @@ class MainServerHandler : ChannelInboundHandlerAdapter() {
                 val id: String = packet.decodeString()
                 val pw: String = packet.decodeString()
 
-                if (id.equals("admin") && pw.equals("admin")) {
+                if (id == "admin" && pw == "admin") {
                     login = true
                 }
 
                 ret.encodeShort(header)
                 ret.encodeBool(login)
 
-                channelSend(ctx!!.channel(), ret)
+                channelSend(ctx.channel(), ret)
             }
 
-            else -> channelSend(ctx!!.channel(), sendPacket)
+            else -> channelSend(ctx.channel(), sendPacket)
         }
     }
 
