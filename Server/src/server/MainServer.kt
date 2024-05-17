@@ -1,4 +1,5 @@
 package server
+import database.Database
 import io.netty.bootstrap.ServerBootstrap
 import io.netty.channel.ChannelInitializer
 import io.netty.channel.ChannelOption
@@ -11,11 +12,12 @@ import io.netty.handler.logging.LoggingHandler
 import network.Codec
 
 object MainServer {
-    val PORT: Int = Integer.parseInt(System.getProperty("port", "8007"))
-
     @Throws(Exception::class)
     @JvmStatic
     fun main(args: Array<String>) {
+        // Load the initial instance of the Database
+        Database.getInstance().load();
+
         // Configure the server.
         val bossGroup: EventLoopGroup = NioEventLoopGroup(1)
         val workerGroup: EventLoopGroup = NioEventLoopGroup()
@@ -39,7 +41,7 @@ object MainServer {
                 })
 
             // Start the server.
-            val f = b.bind(PORT).sync()
+            val f = b.bind(Setting().serverPort).sync()
 
             // Wait until the server socket is closed.
             f.channel().closeFuture().sync()
