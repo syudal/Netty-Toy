@@ -7,9 +7,8 @@ namespace Socketlib {
     public delegate void ExceptionCaught(Exception ex);
 
     public class Client {
-
-        private TcpClient client;
-        private NetworkStream stream;
+        private TcpClient? client;
+        private NetworkStream? stream;
 
         private static Recv? recv;
         private static ExceptionCaught? exceptionCaught;
@@ -19,14 +18,10 @@ namespace Socketlib {
             exceptionCaught = exceptionCaughtFunction;
         }
 
-        ~Client() {
-            recv = null;
-            exceptionCaught = null;
-        }
-
-
         public void Connect(string ip, int port, bool noDelay = false) {
             try {
+                Close();
+
                 client = new TcpClient(ip, port) {
                     NoDelay = noDelay
                 };
@@ -60,8 +55,8 @@ namespace Socketlib {
 
         public void Close() {
             try {
-                stream?.Close();
-                client?.Close();
+                stream?.Dispose();
+                client?.Dispose();
             } catch (Exception ex) {
                 exceptionCaught?.Invoke(ex);
             }
@@ -69,7 +64,11 @@ namespace Socketlib {
 
         private void Recv() {
             try {
-                while (true) {
+                if (client == null || stream == null) {
+                    return;
+                }
+
+                while (client.Client != null & stream.CanRead) {
                     byte[] buffer = new byte[client.ReceiveBufferSize];
                     int length = stream.Read(buffer, 0, buffer.Length);
 

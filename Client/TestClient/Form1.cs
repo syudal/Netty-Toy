@@ -38,11 +38,9 @@ namespace TestClient {
 
         private void button2_Click(object sender, EventArgs e) {
             Packet packet = new();
-            /*
+
             packet.EncodeShort(Convert.ToInt16(!checkBox1.Checked));
             packet.EncodeString(textBox3.Text);
-            */
-            packet.EncodeShort(2);
 
             client.Send(packet);
         }
