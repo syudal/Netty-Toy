@@ -12,7 +12,6 @@ import io.netty.handler.logging.LoggingHandler
 import network.Codec
 
 object MainServer {
-    @Throws(Exception::class)
     @JvmStatic
     fun main(args: Array<String>) {
         // Load the initial instance of the Database
@@ -31,7 +30,6 @@ object MainServer {
                 .childOption(ChannelOption.TCP_NODELAY, true) // Nagle Algorithm 비활성화 여부
                 .childHandler(object : ChannelInitializer<SocketChannel>() {
 
-                    @Throws(Exception::class)
                     public override fun initChannel(ch: SocketChannel) {
                         val p = ch.pipeline()
                         p.addLast(Codec.PacketDecoder())

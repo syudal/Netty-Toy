@@ -9,13 +9,10 @@ import network.Packet
 @Sharable
 class MainServerHandler : ChannelInboundHandlerAdapter() {
 
-    @Throws(Exception::class)
     override fun channelActive(ctx: ChannelHandlerContext) {
         println("[Connect] " + ctx.channel().remoteAddress())
     }
 
-
-    @Throws(Exception::class)
     override fun channelInactive(ctx: ChannelHandlerContext) {
         println("[DisConnect] " + ctx.channel().remoteAddress())
         ctx.channel().close()

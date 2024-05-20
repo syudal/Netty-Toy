@@ -128,7 +128,7 @@ class Packet @JvmOverloads constructor(size: Int = BLOCK_SIZE) {
 
         encodeShort(size)
 
-        for (i in 0 until size) {
+        for (i in 0..<size) {
             if (i >= src.size) {
                 encodeByte('\u0000'.code)
             } else {
@@ -146,7 +146,7 @@ class Packet @JvmOverloads constructor(size: Int = BLOCK_SIZE) {
     }
 
     fun encodePadding(count: Int) {
-        for (i in 0 until count) {
+        for (i in 0..<count) {
             encodeByte(0)
         }
     }

@@ -15,7 +15,7 @@ class Database private constructor(dbName: String, serverName: String, user: Str
             if (instance == null) {
                 synchronized(this) {
                     if (instance == null) {
-                    instance = Database(Setting().dbName, Setting().serverName, Setting().dbUser, Setting().dbPasswd, Setting().dbPort)
+                        instance = Database(Setting().dbName, Setting().serverName, Setting().dbUser, Setting().dbPasswd, Setting().dbPort)
                     }
                 }
             }
@@ -58,7 +58,6 @@ class Database private constructor(dbName: String, serverName: String, user: Str
         return 1
     }
 
-    @Throws(SQLException::class)
     fun execute(con: Connection, propSet: PreparedStatement?, vararg commands: Any): Int {
         if (propSet != null) {
             val result = bind(propSet, *commands)

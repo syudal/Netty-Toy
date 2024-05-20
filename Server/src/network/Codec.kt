@@ -9,7 +9,6 @@ import io.netty.handler.codec.ReplayingDecoder
 
 class Codec {
     class PacketDecoder : ReplayingDecoder<Void?>() {
-        @Throws(Exception::class)
         override fun decode(ctx: ChannelHandlerContext, `in`: ByteBuf, out: MutableList<Any>) {
             val length = `in`.readInt()
 
@@ -24,7 +23,6 @@ class Codec {
     }
 
     class PacketEncoder : MessageToByteEncoder<ByteArray>() {
-        @Throws(Exception::class)
         override fun encode(ctx: ChannelHandlerContext, message: ByteArray, out: ByteBuf) {
             out.writeInt(message.size)
             out.writeBytes(message.copyOf(message.size))
