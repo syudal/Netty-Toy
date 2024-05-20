@@ -4,17 +4,23 @@ import io.netty.channel.Channel
 import io.netty.channel.ChannelHandler.Sharable
 import io.netty.channel.ChannelHandlerContext
 import io.netty.channel.ChannelInboundHandlerAdapter
+import io.netty.channel.group.ChannelGroup
+import io.netty.channel.group.DefaultChannelGroup
+import io.netty.util.concurrent.GlobalEventExecutor
 import network.Packet
 
 @Sharable
 class MainServerHandler : ChannelInboundHandlerAdapter() {
+    private val channelGroup : ChannelGroup = DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
 
     override fun channelActive(ctx: ChannelHandlerContext) {
         println("[Connect] " + ctx.channel().remoteAddress())
+        channelGroup.add(ctx.channel())
     }
 
     override fun channelInactive(ctx: ChannelHandlerContext) {
         println("[DisConnect] " + ctx.channel().remoteAddress())
+        channelGroup.remove(ctx.channel())
         ctx.channel().close()
     }
 
@@ -61,6 +67,9 @@ class MainServerHandler : ChannelInboundHandlerAdapter() {
     }
 
     private fun broadcastChannelSend(packet: Packet) {
+        for (channel in channelGroup){
+            channelSend(channel, packet);
+        }
     }
 
     private fun channelSend(channel: Channel, packet: Packet) {
