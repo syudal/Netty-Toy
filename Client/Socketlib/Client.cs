@@ -43,10 +43,12 @@ namespace Socketlib {
             }
 
             try {
-                Packet sendPacket = Codec.Encoder(packet);
+                if (stream.CanWrite) {
+                    Packet sendPacket = Codec.Encoder(packet);
 
-                stream.Write(sendPacket.ToArray(), 0, sendPacket.Length());
-                stream.Flush();
+                    stream.Write(sendPacket.ToArray(), 0, sendPacket.Length());
+                    stream.Flush();
+                }
             } catch (Exception ex) {
                 Close();
                 exceptionCaught?.Invoke(ex);
@@ -63,11 +65,11 @@ namespace Socketlib {
         }
 
         private void Recv() {
-            try {
-                if (client == null || stream == null) {
-                    return;
-                }
+            if (client == null || stream == null) {
+                return;
+            }
 
+            try {
                 while (client.Client != null & stream.CanRead) {
                     byte[] buffer = new byte[client.ReceiveBufferSize];
                     int length = stream.Read(buffer, 0, buffer.Length);

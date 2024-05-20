@@ -18,8 +18,6 @@ namespace TestClient {
 
         private void UpdatePacket(Packet packet) {
             stringBuilder.AppendLine(packet.ToString());
-            packet.DecodeShort();
-            packet.DecodeInt();
             WriteLog();
         }
 

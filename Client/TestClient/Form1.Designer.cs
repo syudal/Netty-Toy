@@ -68,7 +68,7 @@
             textBox2.Name = "textBox2";
             textBox2.Size = new Size(62, 23);
             textBox2.TabIndex = 3;
-            textBox2.Text = "8007";
+            textBox2.Text = "8787";
             // 
             // button1
             // 
