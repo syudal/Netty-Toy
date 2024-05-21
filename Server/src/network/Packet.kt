@@ -3,7 +3,7 @@ package network
 import io.netty.buffer.ByteBuf
 import io.netty.buffer.Unpooled
 
-import java.nio.charset.StandardCharsets;
+import java.nio.charset.StandardCharsets
 
 class Packet @JvmOverloads constructor(size: Int = BLOCK_SIZE) {
     private val buf: ByteBuf = Unpooled.buffer(size)

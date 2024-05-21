@@ -11,7 +11,7 @@ import network.Packet
 
 @Sharable
 class MainServerHandler : ChannelInboundHandlerAdapter() {
-    private val channelGroup : ChannelGroup = DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
+    private val channelGroup: ChannelGroup = DefaultChannelGroup(GlobalEventExecutor.INSTANCE)
 
     override fun channelActive(ctx: ChannelHandlerContext) {
         println("[Connect] " + ctx.channel().remoteAddress())
@@ -31,9 +31,7 @@ class MainServerHandler : ChannelInboundHandlerAdapter() {
         packet.copyTo(sendPacket)
         println("[Recv] " + ctx.channel().remoteAddress() + " " + packet)
 
-        val header: Int = packet.decodeShort().toInt();
-
-        when (header) {
+        when (val header: Int = packet.decodeShort().toInt()) {
             0 -> broadcastChannelSend(sendPacket)
             1 -> {
                 val ret = Packet()
@@ -67,8 +65,8 @@ class MainServerHandler : ChannelInboundHandlerAdapter() {
     }
 
     private fun broadcastChannelSend(packet: Packet) {
-        for (channel in channelGroup){
-            channelSend(channel, packet);
+        for (channel in channelGroup) {
+            channelSend(channel, packet)
         }
     }
 

@@ -1,28 +1,10 @@
 package database
 
-import server.Setting
 import java.sql.Connection
 import java.sql.PreparedStatement
 import java.sql.SQLException
 
-class Database private constructor(dbName: String, serverName: String, user: String, passwd: String, port: Int) :
-    DatabaseConnector(dbName, serverName, user, passwd, port) {
-    companion object {
-        @Volatile
-        private var instance: Database? = null
-
-        fun getInstance(): Database {
-            if (instance == null) {
-                synchronized(this) {
-                    if (instance == null) {
-                        instance = Database(Setting().dbName, Setting().serverName, Setting().dbUser, Setting().dbPasswd, Setting().dbPort)
-                    }
-                }
-            }
-            return instance!!
-        }
-    }
-
+object Database {
     private fun bind(propSet: PreparedStatement, vararg commands: Any?): Int {
         for (i in 1..commands.size) {
             val command = commands[i - 1]
@@ -44,6 +26,7 @@ class Database private constructor(dbName: String, serverName: String, user: Str
                             }
                             // If it is otherwise a String, we only require setString
                         }
+
                         is String -> propSet.setString(i, command)
                         is Boolean -> propSet.setBoolean(i, command)
                         else -> {}
@@ -90,7 +73,8 @@ class Database private constructor(dbName: String, serverName: String, user: Str
                         // If the query does contain a WHERE condition, parse the back rows (everything after WHERE)
                         if (newQuery.toString().contains("WHERE")) {
                             val backRowsString = newQuery.substring(newQuery.indexOf("WHERE ") + "WHERE ".length)
-                            backRows = backRowsString.replace(" = ? AND ", ", ").replace(" = ?", ", ").split(", ").toTypedArray()
+                            backRows = backRowsString.replace(" = ? AND ", ", ").replace(" = ?", ", ").split(", ")
+                                .toTypedArray()
                         }
                         // Merge the front and back rows into one table, these are all columns being inserted
                         val rowData = arrayOfNulls<String>(frontRows.size + backRows.size)

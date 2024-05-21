@@ -1,78 +1,34 @@
 package database
 
-import com.zaxxer.hikari.HikariConfig
-import com.zaxxer.hikari.HikariDataSource
-import java.sql.Connection
-import java.sql.SQLException
+import server.Setting
 
-
-open class DatabaseConnector {
-    private var dataSource: HikariDataSource? = null
-    private val user: String
-    private val password: String
-    private val dbName: String
-    private val serverName: String
-    private val port: Int
-
-    constructor(dbName: String, user: String, passwd: String) {
-        this.dbName = dbName
-        this.serverName = DEFAULT_HOST
-        this.user = user
-        this.password = passwd
-        this.port = DEFAULT_PORT
-    }
-
-    constructor(dbName: String, serverName: String, user: String, passwd: String, port: Int) {
-        this.dbName = dbName
-        this.serverName = serverName
-        this.user = user
-        this.password = passwd
-        this.port = port
-    }
-
-    fun load() {
-        if (dataSource == null) {
-            val config = HikariConfig()
-            // DB Config
-            config.jdbcUrl = String.format("jdbc:%s://%s:%d/%s", DRIVER_MARIADB, serverName, port, dbName)
-
-            config.username = user
-            config.password = password
-
-            // DB Options
-            config.maximumPoolSize = MAXIMUM_POOL_SIZE
-            config.isAutoCommit = true
-
-            config.addDataSourceProperty("characterEncoding", "utf8")
-            config.addDataSourceProperty("cachePrepStmts", "true")
-            config.addDataSourceProperty("prepStmtCacheSize", "250")
-            config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048")
-            config.addDataSourceProperty("autoReconnect", "true")
-
-            dataSource = HikariDataSource(config)
-        }
-    }
-
-    fun poolConnection(): Connection? {
-        try {
-            if (dataSource != null) {
-                return dataSource!!.connection
-            }
-            //Logger.logError("Attempting to make a connection before loading the database.");
-        } catch (ex: SQLException) {
-            ex.printStackTrace(System.err)
-        }
-        return null
-    }
-
-    fun close() {
-        dataSource!!.close()
-    }
-
+class DatabaseConnector private constructor(
+    dbName: String,
+    serverName: String,
+    user: String,
+    passwd: String,
+    port: Int
+) :
+    DatabaseConnectionPool(dbName, serverName, user, passwd, port) {
     companion object {
-        const val MAXIMUM_POOL_SIZE: Int = 20
-        const val DEFAULT_PORT: Int = 3306
-        const val DRIVER_MARIADB: String = "mariadb"
-        const val DEFAULT_HOST: String = "localhost"
+        @Volatile
+        private var instance: DatabaseConnector? = null
+
+        fun getInstance(): DatabaseConnector {
+            if (instance == null) {
+                synchronized(this) {
+                    if (instance == null) {
+                        instance = DatabaseConnector(
+                            Setting().dbName,
+                            Setting().serverName,
+                            Setting().dbUser,
+                            Setting().dbPasswd,
+                            Setting().dbPort
+                        )
+                    }
+                }
+            }
+            return instance!!
+        }
     }
 }
