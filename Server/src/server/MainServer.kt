@@ -1,6 +1,6 @@
 package server
 
-import database.DatabaseConnector
+import database.Database
 import io.netty.bootstrap.ServerBootstrap
 import io.netty.channel.ChannelInitializer
 import io.netty.channel.ChannelOption
@@ -16,7 +16,7 @@ object MainServer {
     @JvmStatic
     fun main(args: Array<String>) {
         // Load the initial instance of the Database
-        DatabaseConnector.getInstance().load()
+        Database.getInstance().load()
 
         // Configure the server.
         val bossGroup: EventLoopGroup = NioEventLoopGroup(1)
